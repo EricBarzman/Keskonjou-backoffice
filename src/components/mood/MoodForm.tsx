@@ -9,34 +9,36 @@ function MoodForm({ id }: { id: string | undefined }) {
   const navigate = useNavigate();
   const { createMood, updateMood, getMoodById } = useMoods();
 
-  const [mood, setMood] = useState<IMood>({
-    id: "",
-    name: ""
-  });
-  
+  // @ts-expect-error Id is not included
+  const [mood, setMood] = useState<IMood>({});
+
   useEffect(() => {
     if (id) getMoodById(id).then(mood => setMood(mood));
   }, [])
 
-  async function handleSubmit(e : FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault(); // youpi
+
+    if (mood?.name === undefined) return;
+    
+    const data = {
+      name: mood?.name
+    }
 
     try {
       // Create
       if (!id) {
-        const result = await createMood({
-          name: mood.name
-        });
+        const result = await createMood(data);
         if (result) id = result.id;
       }
 
       // Update
       if (id)
-        await updateMood(id, mood);
+        await updateMood(id, data);
 
       // Go to the newly created/updated entry
       navigate(`/song/mood/${id}`);
-      
+
     } catch (error) {
       console.error(error);
     }

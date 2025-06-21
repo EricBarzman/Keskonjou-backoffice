@@ -12,10 +12,8 @@ function StyleForm({ id }: { id: string | undefined }) {
   const navigate = useNavigate();
   const { createStyle, updateStyle, getStyleById } = useStyles();
 
-  const [style, setStyle] = useState<IStyle>({
-    id: "",
-    name: ""
-  });
+  // @ts-expect-error Id is not included
+  const [style, setStyle] = useState<IStyle>({});
   
   useEffect(() => {
     if (id) getStyleById(id).then(style => setStyle(style));
@@ -24,18 +22,21 @@ function StyleForm({ id }: { id: string | undefined }) {
   async function handleSubmit(e : FormEvent<HTMLFormElement>) {
     e.preventDefault(); // youpi
 
+    if (style?.name === undefined) return;
+    
+    const data = {
+      name: style?.name
+    }
+
     try {
       // Create
       if (!id) {
-        const result = await createStyle({
-          name: style.name
-        });
+        const result = await createStyle(data);
         if (result) id = result.id;
       }
 
       // Update
-      if (id)
-        await updateStyle(id, style);
+      if (id) await updateStyle(id, data);
 
       // Go to the newly created/updated entry
       navigate(`/song/style/${id}`);
