@@ -5,9 +5,15 @@ import PeopleCats from "./pages/peopleCats/PeopleCats"
 import InstrumentCats from "./pages/instrumentCats/InstrumentCats"
 import SongCats from "./pages/songCats/SongCats"
 import GigCats from "./pages/gigCats/GigCats"
+
 import MoodsPage from "./pages/mood/MoodsPage"
 import MoodSinglePage from "./pages/mood/MoodSinglePage"
 import MoodCreateOrEdit from "./pages/mood/MoodCreateOrEdit"
+
+import StylesPage from "./pages/style/StylesPage"
+import StyleSinglePage from "./pages/style/StyleSinglePage"
+import StyleCreateOrEdit from "./pages/style/StyleCreateOrEdit"
+
 
 function App() {
 
@@ -34,7 +40,25 @@ function App() {
             <Route path="/song/song" element={<p>Song</p>} />
             
             
-            <Route path="/song/style" element={<p>Style</p>} />
+            <Route path="/song/style" element={<StylesPage />} />
+            <Route path="/song/style/add" element={
+              <>
+                <StylesPage />
+                <StyleCreateOrEdit />
+              </>
+            } />
+            <Route path="/song/style/:id" element={
+              <>
+                <StylesPage />
+                <StyleSinglePage />
+              </>
+            } />
+            <Route path="/song/style/:id/edit" element={
+              <>
+                <StylesPage />
+                <StyleCreateOrEdit />
+              </>
+            } />
             
             
             <Route path="/song/mood" element={<MoodsPage />} />
