@@ -5,6 +5,9 @@ import PeopleCats from "./pages/peopleCats/PeopleCats"
 import InstrumentCats from "./pages/instrumentCats/InstrumentCats"
 import SongCats from "./pages/songCats/SongCats"
 import GigCats from "./pages/gigCats/GigCats"
+import MoodsPage from "./pages/mood/MoodsPage"
+import MoodSinglePage from "./pages/mood/MoodSinglePage"
+import MoodCreateOrEdit from "./pages/mood/MoodCreateOrEdit"
 
 function App() {
 
@@ -26,9 +29,35 @@ function App() {
             <Route path="/instrument/family" element={<p>Famille d'instrument</p>} />
 
             <Route path="/song" element={<SongCats />} />
+            
+            
             <Route path="/song/song" element={<p>Song</p>} />
+            
+            
             <Route path="/song/style" element={<p>Style</p>} />
-            <Route path="/song/mood" element={<p>Mood</p>} />
+            
+            
+            <Route path="/song/mood" element={<MoodsPage />} />
+            <Route path="/song/mood/add" element={
+              <>
+                <MoodsPage />
+                <MoodCreateOrEdit />
+              </>
+            } />
+            <Route path="/song/mood/:id" element={
+              <>
+                <MoodsPage />
+                <MoodSinglePage />
+              </>
+            } />
+            <Route path="/song/mood/:id/edit" element={
+              <>
+                <MoodsPage />
+                <MoodCreateOrEdit />
+              </>
+            } />
+            
+            
             <Route path="/song/setlist" element={<p>Setlist</p>} />
 
             <Route path="/gig" element={<GigCats />} />

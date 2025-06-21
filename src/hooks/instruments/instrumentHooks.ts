@@ -28,7 +28,7 @@ export function useInstruments() {
   async function getInstrumentById(id: string) {
     const ref = doc(db, "instruments", id);
     const snap = await getDoc(ref);
-    return { ...snap.data, id } as IInstrument;
+    return { ...snap.data(), id } as IInstrument;
   }
 
   async function createInstrument(data: DocumentData) {

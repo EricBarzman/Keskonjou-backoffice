@@ -28,7 +28,7 @@ export function useCostumes() {
   async function getCostumeById(id: string) {
     const ref = doc(db, "costumes", id);
     const snap = await getDoc(ref);
-    return { ...snap.data, id } as ICostume
+    return { ...snap.data(), id } as ICostume
   }
 
   async function createCostume(data: DocumentData) {

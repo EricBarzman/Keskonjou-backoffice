@@ -28,7 +28,7 @@ export function useStyles() {
   async function getStyleById(id: string) {
     const ref = doc(db, "styles", id);
     const snap = await getDoc(ref);
-    return { ...snap.data, id } as IStyle
+    return { ...snap.data(), id } as IStyle
   }
 
   async function createStyle(data: DocumentData) {

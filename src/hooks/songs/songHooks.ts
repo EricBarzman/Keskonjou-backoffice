@@ -28,7 +28,7 @@ export function useSongs() {
   async function getSongById(id: string) {
     const ref = doc(db, "songs", id);
     const snap = await getDoc(ref);
-    return { ...snap.data, id } as ISong
+    return { ...snap.data(), id } as ISong
   }
 
   async function createSong(data: DocumentData) {

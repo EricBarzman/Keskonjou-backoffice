@@ -28,7 +28,7 @@ export function useGigs() {
   async function getGigById(id: string) {
     const ref = doc(db, "gigs", id);
     const snap = await getDoc(ref);
-    return { ...snap.data, id } as IGig
+    return { ...snap.data(), id } as IGig
   }
 
   async function createGig(data: DocumentData) {

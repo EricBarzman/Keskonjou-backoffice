@@ -28,7 +28,7 @@ export function useSetlists() {
   async function getSetlistById(id: string) {
     const ref = doc(db, "setlists", id);
     const snap = await getDoc(ref);
-    return { ...snap.data, id } as ISetlist
+    return { ...snap.data(), id } as ISetlist
   }
 
   async function createSetlist(data: DocumentData) {

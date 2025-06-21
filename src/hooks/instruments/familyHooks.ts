@@ -28,7 +28,7 @@ export function useFamilies() {
   async function getFamilyById(id: string) {
     const ref = doc(db, "families", id);
     const snap = await getDoc(ref);
-    return { ...snap.data, id } as IFamily
+    return { ...snap.data(), id } as IFamily
   }
 
   async function createFamily(data: DocumentData) {

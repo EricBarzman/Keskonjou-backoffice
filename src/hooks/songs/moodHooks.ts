@@ -22,13 +22,15 @@ export function useMoods() {
       query(ref, orderBy('name'))
     );
 
-    return snap.docs.map(doc => Object.assign({}, { id: doc.id }, doc.data())) as IMood[]
+    return snap.docs.map(doc => Object.assign(
+      {}, { id: doc.id }, doc.data()
+    )) as IMood[]
   }
 
   async function getMoodById(id: string) {
     const ref = doc(db, "moods", id);
     const snap = await getDoc(ref);
-    return { ...snap.data, id } as IMood
+    return { ...snap.data(), id } as IMood
   }
 
   async function createMood(data: DocumentData) {
