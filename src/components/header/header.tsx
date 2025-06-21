@@ -14,7 +14,7 @@ function Header() {
 
       {/* Nav */}
       <nav className='flex flex-col justify-between h-1/2 items-base'>
-        <Link className={btnClassnames} to="/user">
+        <Link className={btnClassnames} to="/people">
           People
         </Link>
         <Link className={btnClassnames} to="/instrument">

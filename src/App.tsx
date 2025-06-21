@@ -1,6 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Header from "./components/header/header"
 import Home from "./pages/home/Home"
+import PeopleCats from "./pages/peopleCats/PeopleCats"
+import InstrumentCats from "./pages/instrumentCats/InstrumentCats"
+import SongCats from "./pages/songCats/SongCats"
+import GigCats from "./pages/gigCats/GigCats"
 
 function App() {
 
@@ -11,17 +15,26 @@ function App() {
           <Header />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/user" element={<p>Users</p>} />
-            <Route path="/musician" element={<p>Musicians</p>} />
-            <Route path="/band" element={<p>Bands</p>} />
-            <Route path="/family" element={<p>Famille d'instrument</p>} />
-            <Route path="/instrument" element={<p>Instrument</p>} />
-            <Route path="/style" element={<p>Style</p>} />
-            <Route path="/mood" element={<p>Mood</p>} />
-            <Route path="/costume" element={<p>Costume</p>} />
-            <Route path="/song" element={<p>Song</p>} />
-            <Route path="/setlist" element={<p>Setlist</p>} />
-            <Route path="/gig" element={<p>Gig</p>} />
+
+            <Route path="/people" element={<PeopleCats />} />
+            <Route path="/people/user" element={<p>Users</p>} />
+            <Route path="/people/musician" element={<p>Musicians</p>} />
+            <Route path="/people/band" element={<p>Bands</p>} />
+
+            <Route path="/instrument" element={<InstrumentCats />} />
+            <Route path="/instrument/instrument" element={<p>Instrument</p>} />
+            <Route path="/instrument/family" element={<p>Famille d'instrument</p>} />
+
+            <Route path="/song" element={<SongCats />} />
+            <Route path="/song/song" element={<p>Song</p>} />
+            <Route path="/song/style" element={<p>Style</p>} />
+            <Route path="/song/mood" element={<p>Mood</p>} />
+            <Route path="/song/setlist" element={<p>Setlist</p>} />
+
+            <Route path="/gig" element={<GigCats />} />
+            <Route path="/gig/gig" element={<p>Gig</p>} />
+            <Route path="/gig/costume" element={<p>Costume</p>} />
+
           </Routes>
         </div >
       </BrowserRouter>
