@@ -21,7 +21,7 @@ export interface ISong extends DocumentData {
   partitionPath? : string;
 }
 
-export interface ISetList extends DocumentData {
+export interface ISetlist extends DocumentData {
   id: string;
   title: string;
   duration: number;                 // en secondes

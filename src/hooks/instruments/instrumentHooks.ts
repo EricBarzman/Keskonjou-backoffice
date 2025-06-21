@@ -11,6 +11,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { db } from '../client';
+import type { IInstrument } from '../../types/instrument.type';
 
 
 export function useInstruments() {
@@ -21,13 +22,13 @@ export function useInstruments() {
       query(ref, orderBy('name'))
     );
 
-    return snap.docs.map(doc => Object.assign({}, { id: doc.id }, doc.data()))
+    return snap.docs.map(doc => Object.assign({}, { id: doc.id }, doc.data())) as IInstrument[]
   }
 
   async function getInstrumentById(id: string) {
     const ref = doc(db, "instruments", id);
     const snap = await getDoc(ref);
-    return { ...snap.data, id }
+    return { ...snap.data, id } as IInstrument;
   }
 
   async function createInstrument(data: DocumentData) {
