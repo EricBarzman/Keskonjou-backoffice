@@ -21,7 +21,7 @@ function SongsPage() {
   // if (songs.length === 0) return <h2>Aucun song trouvé</h2>
 
   return (
-    < main className='py-6 px-20 w-1/2' >
+    < main className='py-6 px-20 w-1/3' >
 
       <h3 className='font-bold text-xl mb-6'>Songs</h3>
 

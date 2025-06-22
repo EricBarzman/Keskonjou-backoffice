@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState, type FormEvent } from "react";
 
 import type { IMood, ISong, IStyle } from "../../types/song.type";
@@ -10,9 +10,22 @@ import { useMoods } from "../../hooks/songs/moodHooks";
 import { useInstruments } from "../../hooks/instruments/instrumentHooks";
 import type { IInstrument } from "../../types/instrument.type";
 
+const emptySong = {
+    id: "",
+    title: "",
+    styleId: "",
+    moodId: "",
+    duration: 0,
+    instrumentsNotRequired: [],
+    hasSolo: false,
+    partitionPath: "",
+  }
+
 function SongCreateOrEdit() {
 
   let { id } = useParams();
+
+  const location = useLocation();
 
   const navigate = useNavigate();
   const { createSong, updateSong, getSongById } = useSongs();
@@ -21,25 +34,37 @@ function SongCreateOrEdit() {
   const { getMoods } = useMoods();
   const { getInstruments } = useInstruments();
 
-  const [song, setSong] = useState<ISong>({
-    id: "",
-    title : "",
-    duration: 0,
-    instrumentsNotRequired: [],
-    hasSolo: false,
-    partitionPath: "",
-  });
+  const [song, setSong] = useState<ISong>(emptySong);
+
+  const [durationInMin, setDurationInMin] = useState(0);
+  const [durationInSec, setDurationInSec] = useState(0);
 
   const [styles, setStyles] = useState<IStyle[]>([]);
   const [moods, setMoods] = useState<IMood[]>([]);
   const [instruments, setInstruments] = useState<IInstrument[]>([]);
 
   useEffect(() => {
-    if (id) getSongById(id).then(song => setSong(song));
+    if (id) getSongById(id).then(song => {
+      setSong(song);
+      setDurationInMin(Math.floor(song.duration! / 60));
+      setDurationInSec(Math.floor(song.duration! % 60));
+    });
     getMoods().then(it => setMoods(it));
     getStyles().then(it => setStyles(it));
     getInstruments().then(it => setInstruments(it));
   }, [])
+
+  // Reset everything (specially if user click "create" button)
+  useEffect(() => {
+    setSong(emptySong);
+    setDurationInMin(0);
+    setDurationInSec(0);
+  }, [location])
+
+  // Alter duration
+  useEffect(() => {
+    setSong({ ...song, duration: (durationInMin * 60) + durationInSec })
+  }, [durationInMin, durationInSec])
 
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -54,6 +79,7 @@ function SongCreateOrEdit() {
       title: song.title,
       duration: song.duration,
       styleId: song.styleId,
+      moodId: song.moodId,
       instrumentsNotRequired: song.instrumentsNotRequired,
       hasSolo: song.hasSolo,
       partitionPath: song.partitionPath,
@@ -94,14 +120,32 @@ function SongCreateOrEdit() {
             placeholder="Title..."
           />
 
-          <label className="mt-4 mb-2 text-sm font-semibold">Duration (in seconds)</label>
-          <input
-            type="number"
-            onChange={(e) => setSong({ ...song, duration: parseInt(e.target.value) })}
-            className="border-2 p-2 border-gray-200"
-            value={song.duration}
-            placeholder="Duration (in seconds)..."
-          />
+          <label className="mt-4 mb-2 text-sm font-semibold">Duration</label>
+          <div className="flex flex-col">
+            <div>
+              <label className="mr-2 text-xs font-semibold">Minutes</label>
+              <input
+                min={0}
+                type="number"
+                onChange={(e) => setDurationInMin(parseInt(e.target.value))}
+                className="border-2 p-2 mb-2 w-1/3 border-gray-200"
+                value={durationInMin}
+                placeholder="min..."
+              />
+            </div>
+            <div>
+              <label className="mr-2 text-xs font-semibold">Seconds</label>
+              <input
+                type="number"
+                min={0}
+                max={59}
+                onChange={(e) => setDurationInSec(parseInt(e.target.value))}
+                className="border-2 p-2 w-1/3 border-gray-200"
+                value={durationInSec}
+                placeholder="secs..."
+              />
+            </div>
+          </div>
 
           <label className="mt-4 mb-2 text-sm font-semibold">Mood</label>
           <select
@@ -143,13 +187,15 @@ function SongCreateOrEdit() {
             )}
           </div>
 
-          <label className="mt-4 mb-2 text-sm font-semibold">Is there a solo?</label>
-          <input
-            type="checkbox"
-            className="border-2 p-2 border-gray-200"
-            onClick={() => setSong({ ...song, hasSolo: !song.hasSolo})}
-          />
-          
+          <div className="mt-4">
+            <label className="mr-2 text-sm font-semibold">Is there a solo?</label>
+            <input
+              type="checkbox"
+              className="border-2 p-2 border-gray-200"
+              onClick={() => setSong({ ...song, hasSolo: !song.hasSolo })}
+            />
+          </div>
+
           <button className="cursor-pointer mt-6 rounded-lg p-2 text-white bg-teal-500 hover:bg-teal-600" type="submit">
             OK
           </button>

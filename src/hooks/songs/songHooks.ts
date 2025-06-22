@@ -11,7 +11,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { db } from '../client';
-import type { ISong } from '../../types/song.type';
+import type { ISong, ISongNested } from '../../types/song.type';
 
 
 export function useSongs() {
@@ -28,7 +28,42 @@ export function useSongs() {
   async function getSongById(id: string) {
     const ref = doc(db, "songs", id);
     const snap = await getDoc(ref);
-    return { ...snap.data(), id } as ISong
+    return {
+      ...snap.data(),
+      id,
+    } as unknown as ISong
+  }
+
+  async function getSongByIdNested(id: string) {
+    const ref = doc(db, "songs", id);
+    const snap = await getDoc(ref);
+
+    // Get external attributes --eg join--
+    const refStyle = doc(db, "styles", snap.data()!.styleId)
+    const style = await getDoc(refStyle);
+
+    const refMood = doc(db, "moods", snap.data()!.moodId)
+    const mood = await getDoc(refMood);
+
+    const refInstruments = collection(db, "instruments");
+    const instruments = await getDocs(refInstruments);
+    const selectedInstruments = instruments.docs
+      .map(doc => Object.assign({}, { id: doc.id }, doc.data()))
+      .filter(instrument => snap.data()!.instrumentsNotRequired.includes(instrument.id))
+    
+    return {
+      ...snap.data(),
+      id,
+      style : {
+        id: style.id,
+        ...style.data()
+      },
+      mood : {
+        id: mood.id,
+        ...mood.data()
+      },
+      instrumentsNotRequired: selectedInstruments,
+    } as unknown as ISongNested
   }
 
   async function createSong(data: DocumentData) {
@@ -46,5 +81,5 @@ export function useSongs() {
     return deleteDoc(ref);
   }
 
-  return { getSongs, getSongById, createSong, updateSong, deleteSong }
+  return { getSongs, getSongById, getSongByIdNested, createSong, updateSong, deleteSong }
 }

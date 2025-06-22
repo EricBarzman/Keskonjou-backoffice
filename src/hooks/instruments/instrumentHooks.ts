@@ -11,7 +11,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { db } from '../client';
-import type { IFamily, IInstrument, IInstrumentNested } from '../../types/instrument.type';
+import type { IInstrument, IInstrumentNested } from '../../types/instrument.type';
 
 
 export function useInstruments() {
