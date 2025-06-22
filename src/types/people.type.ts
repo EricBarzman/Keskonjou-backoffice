@@ -9,6 +9,7 @@ export interface IUser extends DocumentData {
   role: "user" | "admin"
 }
 
+
 export interface IMusician extends DocumentData {
   id: string;
   firsname: string;
