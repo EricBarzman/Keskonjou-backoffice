@@ -11,7 +11,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { db } from '../client';
-import type { IInstrument } from '../../types/instrument.type';
+import type { IFamily, IInstrument, IInstrumentNested } from '../../types/instrument.type';
 
 
 export function useInstruments() {
@@ -28,7 +28,19 @@ export function useInstruments() {
   async function getInstrumentById(id: string) {
     const ref = doc(db, "instruments", id);
     const snap = await getDoc(ref);
-    return { ...snap.data(), id } as IInstrument;
+
+    // Get external attributes --eg join--
+    const refFamily = doc(db, "families", snap.data()!.familyId)
+    const family = await getDoc(refFamily);
+    
+    return {
+      ...snap.data(),
+      id,
+      family: {
+        id: family.id,
+        ...family.data(),
+      },
+    } as IInstrumentNested;
   }
 
   async function createInstrument(data: DocumentData) {

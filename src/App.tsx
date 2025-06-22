@@ -13,6 +13,15 @@ import MoodCreateOrEdit from "./pages/mood/MoodCreateOrEdit"
 import StylesPage from "./pages/style/StylesPage"
 import StyleSinglePage from "./pages/style/StyleSinglePage"
 import StyleCreateOrEdit from "./pages/style/StyleCreateOrEdit"
+import CostumesPage from "./pages/costume/CostumesPage"
+import CostumeCreateOrEdit from "./pages/costume/CostumeCreateOrEdit"
+import CostumeSinglePage from "./pages/costume/CostumeSinglePage"
+import FamiliesPage from "./pages/family/FamiliesPage"
+import FamilySinglePage from "./pages/family/FamilySinglePage"
+import FamilyCreateOrEdit from "./pages/family/FamilyCreateOrEdit"
+import InstrumentsPage from "./pages/instrument/InstrumentsPage"
+import InstrumentSinglePage from "./pages/instrument/InstrumentSinglePage"
+import InstrumentCreateOrEdit from "./pages/instrument/InstrumentCreateOrEdit"
 
 
 function App() {
@@ -31,11 +40,49 @@ function App() {
             <Route path="/people/band" element={<p>Bands</p>} />
 
             <Route path="/instrument" element={<InstrumentCats />} />
-            <Route path="/instrument/instrument" element={<p>Instrument</p>} />
-            <Route path="/instrument/family" element={<p>Famille d'instrument</p>} />
-
-            <Route path="/song" element={<SongCats />} />
             
+            <Route path="/instrument/instrument" element={<InstrumentsPage />} />
+            <Route path="/instrument/instrument/add" element={
+              <>
+                <InstrumentsPage />
+                <InstrumentCreateOrEdit />
+              </>
+            } />
+            <Route path="/instrument/instrument/:id" element={
+              <>
+                <InstrumentsPage />
+                <InstrumentSinglePage />
+              </>
+            } />
+            <Route path="/instrument/instrument/:id/edit" element={
+              <>
+                <InstrumentsPage />
+                <InstrumentCreateOrEdit />
+              </>
+            } />
+
+            <Route path="/instrument/family" element={<FamiliesPage />} />
+            <Route path="/instrument/family/add" element={
+              <>
+                <FamiliesPage />
+                <FamilyCreateOrEdit />
+              </>
+            } />
+            <Route path="/instrument/family/:id" element={
+              <>
+                <FamiliesPage />
+                <FamilySinglePage />
+              </>
+            } />
+            <Route path="/instrument/family/:id/edit" element={
+              <>
+                <FamiliesPage />
+                <FamilyCreateOrEdit />
+              </>
+            } />
+            
+            
+            <Route path="/song" element={<SongCats />} />
             
             <Route path="/song/song" element={<p>Song</p>} />
             
@@ -86,7 +133,26 @@ function App() {
 
             <Route path="/gig" element={<GigCats />} />
             <Route path="/gig/gig" element={<p>Gig</p>} />
-            <Route path="/gig/costume" element={<p>Costume</p>} />
+            
+            <Route path="/gig/costume" element={<CostumesPage />} />
+            <Route path="/gig/costume/add" element={
+              <>
+                <CostumesPage />
+                <CostumeCreateOrEdit />
+              </>
+            } />
+            <Route path="/gig/costume/:id" element={
+              <>
+                <CostumesPage />
+                <CostumeSinglePage />
+              </>
+            } />
+            <Route path="/gig/costume/:id/edit" element={
+              <>
+                <CostumesPage />
+                <CostumeCreateOrEdit />
+              </>
+            } />
 
           </Routes>
         </div >
