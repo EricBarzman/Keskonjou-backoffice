@@ -11,15 +11,15 @@ import { useInstruments } from "../../hooks/instruments/instrumentHooks";
 import type { IInstrument } from "../../types/instrument.type";
 
 const emptySong = {
-    id: "",
-    title: "",
-    styleId: "",
-    moodId: "",
-    duration: 0,
-    instrumentsNotRequired: [],
-    hasSolo: false,
-    partitionPath: "",
-  }
+  id: "",
+  title: "",
+  styleId: "",
+  moodId: "",
+  duration: 0,
+  instrumentsNotRequired: [],
+  hasSolo: false,
+  partitionPath: "",
+}
 
 function SongCreateOrEdit() {
 
@@ -66,6 +66,20 @@ function SongCreateOrEdit() {
     setSong({ ...song, duration: (durationInMin * 60) + durationInSec })
   }, [durationInMin, durationInSec])
 
+  function handleInstruments(e: FormEvent<HTMLInputElement>) {
+    if (e.currentTarget.checked)
+      setSong({ ...song, instrumentsNotRequired: [...song.instrumentsNotRequired!, e.currentTarget.value] })
+
+    if (!e.currentTarget.checked)
+      setSong({ ...song, instrumentsNotRequired: song.instrumentsNotRequired!.filter(ins => ins !== e.currentTarget.value) })
+  }
+
+  function handleSolo(e: FormEvent<HTMLInputElement>) {
+    if (e.currentTarget.checked)
+      setSong({ ...song, hasSolo: true })
+    if (!e.currentTarget.checked)
+      setSong({ ...song, hasSolo: false })
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault(); // youpi
@@ -178,10 +192,10 @@ function SongCreateOrEdit() {
                 <label className="mt-4">{instrument.name}</label>
                 <input
                   type="checkbox"
-                  onChange={(e) => setSong({ ...song, instrumentsNotRequired: [...song.instrumentsNotRequired!, e.target.value] })}
+                  defaultChecked={song.instrumentsNotRequired?.includes(instrument.id)}
+                  onChange={handleInstruments}
                   className="w-[10] h-[10]"
                   value={instrument.id}
-                  placeholder="Duration (in seconds)..."
                 />
               </div>
             )}
@@ -191,8 +205,9 @@ function SongCreateOrEdit() {
             <label className="mr-2 text-sm font-semibold">Is there a solo?</label>
             <input
               type="checkbox"
+              checked={song.hasSolo}
               className="border-2 p-2 border-gray-200"
-              onClick={() => setSong({ ...song, hasSolo: !song.hasSolo })}
+              onClick={handleSolo}
             />
           </div>
 

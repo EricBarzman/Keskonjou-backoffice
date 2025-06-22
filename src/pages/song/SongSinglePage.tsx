@@ -57,8 +57,11 @@ function SongSinglePage() {
               </td>
               <td className="border border-gray-500 p-3">{song.style.name}</td>
               <td className="border border-gray-500 p-3">{song.mood.name}</td>
-              <td className="border border-gray-500 p-3">{song.instrumentsNotRequired?.map(it => it.name)}</td>
-              {/* <td className="border border-gray-500 p-3">{song.instrumentsNotRequired?.map(i => i.name).join(", ")}</td> */}
+              <td className="border border-gray-500 p-3">
+                {song.instrumentsNotRequired?.length === 0
+                  ? "N/A"
+                  : song.instrumentsNotRequired!.map(i => i.name).join(", ")}
+              </td>
               <td className="border border-gray-500 p-3">{song.hasSolo ? "Yes" : "No"}</td>
               <td className="border border-gray-500 p-3">{song.partitionPath !== "" ? song.partitionPath : "N/A"}</td>
               

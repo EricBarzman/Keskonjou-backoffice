@@ -1,4 +1,5 @@
 import { type DocumentData } from "firebase/firestore";
+import type { IInstrument } from "./instrument.type";
 
 export interface IUser extends DocumentData {
   id: string;
@@ -12,9 +13,16 @@ export interface IUser extends DocumentData {
 
 export interface IMusician extends DocumentData {
   id: string;
-  firsname: string;
+  firstname: string;
   lastname: string;
   instruments: string[]
+}
+
+export interface IMusicianNested extends DocumentData {
+  id: string;
+  firstname: string;
+  lastname: string;
+  instruments: IInstrument[]
 }
 
 export interface IBand extends DocumentData {

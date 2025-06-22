@@ -25,6 +25,9 @@ import InstrumentCreateOrEdit from "./pages/instrument/InstrumentCreateOrEdit"
 import SongsPage from "./pages/song/SongsPage"
 import SongCreateOrEdit from "./pages/song/SongCreateOrEdit"
 import SongSinglePage from "./pages/song/SongSinglePage"
+import MusiciansPage from "./pages/musician/MusiciansPage"
+import MusicianCreateOrEdit from "./pages/musician/MusicianCreateOrEdit"
+import MusicianSinglePage from "./pages/musician/MusicianSinglePage"
 
 
 function App() {
@@ -38,10 +41,32 @@ function App() {
             <Route path="/" element={<Home />} />
 
             <Route path="/people" element={<PeopleCats />} />
+            
             <Route path="/people/user" element={<p>Users</p>} />
-            <Route path="/people/musician" element={<p>Musicians</p>} />
+            
+            <Route path="/people/musician" element={<MusiciansPage />} />
+            <Route path="/people/musician/add" element={
+              <>
+                <MusiciansPage />
+                <MusicianCreateOrEdit />
+              </>
+            } />
+            <Route path="/people/musician/:id" element={
+              <>
+                <MusiciansPage />
+                <MusicianSinglePage />
+              </>
+            } />
+            <Route path="/people/musician/:id/edit" element={
+              <>
+                <MusiciansPage />
+                <MusicianCreateOrEdit />
+              </>
+            } />
+
             <Route path="/people/band" element={<p>Bands</p>} />
 
+            
             <Route path="/instrument" element={<InstrumentCats />} />
             
             <Route path="/instrument/instrument" element={<InstrumentsPage />} />

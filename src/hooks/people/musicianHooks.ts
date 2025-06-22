@@ -11,7 +11,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { db } from '../client';
-import type { IMusician } from '../../types/people.type';
+import type { IMusician, IMusicianNested } from '../../types/people.type';
 
 
 export function useMusicians() {
@@ -31,6 +31,23 @@ export function useMusicians() {
     return { ...snap.data(), id } as IMusician
   }
 
+  async function getMusicianByIdNested(id: string) {
+    const ref = doc(db, "musicians", id);
+    const snap = await getDoc(ref);
+
+    const instrumentRef = collection(db, "instruments");
+    const allInstruments = await getDocs(instrumentRef);
+    const instruments = allInstruments.docs
+      .map(doc => Object.assign({}, { id: doc.id }, doc.data()))
+      .filter(instrument => snap.data()!.instruments.includes(instrument.id))
+
+    return {
+      ...snap.data(),
+      id,
+      instruments,
+    } as IMusicianNested
+  }
+
   async function createMusician(data: DocumentData) {
     const ref = collection(db, "musicians");
     return addDoc(ref, data);
@@ -46,5 +63,5 @@ export function useMusicians() {
     return deleteDoc(ref);
   }
 
-  return { getMusicians, getMusicianById, createMusician, updateMusician, deleteMusician }
+  return { getMusicians, getMusicianById, getMusicianByIdNested, createMusician, updateMusician, deleteMusician }
 }
