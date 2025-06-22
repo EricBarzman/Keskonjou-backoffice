@@ -22,6 +22,9 @@ import FamilyCreateOrEdit from "./pages/family/FamilyCreateOrEdit"
 import InstrumentsPage from "./pages/instrument/InstrumentsPage"
 import InstrumentSinglePage from "./pages/instrument/InstrumentSinglePage"
 import InstrumentCreateOrEdit from "./pages/instrument/InstrumentCreateOrEdit"
+import SongsPage from "./pages/song/SongsPage"
+import SongCreateOrEdit from "./pages/song/SongCreateOrEdit"
+import SongSinglePage from "./pages/song/SongSinglePage"
 
 
 function App() {
@@ -84,7 +87,25 @@ function App() {
             
             <Route path="/song" element={<SongCats />} />
             
-            <Route path="/song/song" element={<p>Song</p>} />
+            <Route path="/song/song" element={<SongsPage />} />
+            <Route path="/song/song/add" element={
+              <>
+                <SongsPage />
+                <SongCreateOrEdit />
+              </>
+            } />
+            <Route path="/song/song/:id" element={
+              <>
+                <SongsPage />
+                <SongSinglePage />
+              </>
+            } />
+            <Route path="/song/song/:id/edit" element={
+              <>
+                <SongsPage />
+                <SongCreateOrEdit />
+              </>
+            } />
             
             
             <Route path="/song/style" element={<StylesPage />} />

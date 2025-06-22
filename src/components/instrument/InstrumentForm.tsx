@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { useEffect, useState, type FormEvent } from "react";
 
 import { useInstruments } from "../../hooks/instruments/instrumentHooks";
-import type { IFamily, IInstrument } from "../../types/instrument.type";
+import type { IFamily, IInstrumentNested } from "../../types/instrument.type";
 
 import BackBtn from "../backBtn/backBtn";
 import { useFamilies } from "../../hooks/instruments/familyHooks";
@@ -15,7 +15,7 @@ function InstrumentForm({ id }: { id: string | undefined }) {
   const { getFamilies } = useFamilies();
 
   // @ts-expect-error : Id is not included
-  const [instrument, setInstrument] = useState<IInstrument>({});
+  const [instrument, setInstrument] = useState<IInstrumentNested>({});
   const [families, setFamilies] = useState<IFamily[]>([]);
 
   useEffect(() => {
