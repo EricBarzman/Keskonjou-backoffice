@@ -6,8 +6,18 @@ export interface IUser extends DocumentData {
   username: string
   musicianId: string;
   email: string;
-  avatarId: string
-  role: "user" | "admin"
+  avatarId: string;
+  role: "user" | "admin";
+}
+
+export interface IUserNested extends DocumentData {
+  id: string;
+  username: string
+  musicianId: string;
+  musician: IMusician;
+  email: string;
+  avatarId: string;
+  role: "user" | "admin";
 }
 
 

@@ -11,7 +11,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { db } from '../client';
-import type { IUser } from '../../types/people.type';
+import type { IUser, IUserNested } from '../../types/people.type';
 
 
 export function useUsers() {
@@ -31,6 +31,29 @@ export function useUsers() {
     return { ...snap.data(), id } as IUser
   }
 
+  async function getUserByIdNested(id: string) {
+    const ref = doc(db, "users", id);
+    const snap = await getDoc(ref);
+
+    let musician = undefined;
+
+    if (snap.data()!.musicianId) {
+      const musicianRef = doc(db, "musicians", snap.data()!.musicianId);
+      musician = await getDoc(musicianRef);
+    }
+
+    return {
+      ...snap.data(),
+      id,
+      musician: musician
+        ? {
+          id: musician.id,
+          ...musician.data()
+        }
+        : {}
+    } as IUserNested
+  }
+
   async function createUser(data: DocumentData) {
     const ref = collection(db, "users");
     return addDoc(ref, data);
@@ -46,5 +69,5 @@ export function useUsers() {
     return deleteDoc(ref);
   }
 
-  return { getUsers, getUserById, createUser, updateUser, deleteUser }
+  return { getUsers, getUserById, getUserByIdNested, createUser, updateUser, deleteUser }
 }

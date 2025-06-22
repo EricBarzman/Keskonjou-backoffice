@@ -13,21 +13,30 @@ import MoodCreateOrEdit from "./pages/mood/MoodCreateOrEdit"
 import StylesPage from "./pages/style/StylesPage"
 import StyleSinglePage from "./pages/style/StyleSinglePage"
 import StyleCreateOrEdit from "./pages/style/StyleCreateOrEdit"
+
 import CostumesPage from "./pages/costume/CostumesPage"
 import CostumeCreateOrEdit from "./pages/costume/CostumeCreateOrEdit"
 import CostumeSinglePage from "./pages/costume/CostumeSinglePage"
+
 import FamiliesPage from "./pages/family/FamiliesPage"
 import FamilySinglePage from "./pages/family/FamilySinglePage"
 import FamilyCreateOrEdit from "./pages/family/FamilyCreateOrEdit"
+
 import InstrumentsPage from "./pages/instrument/InstrumentsPage"
 import InstrumentSinglePage from "./pages/instrument/InstrumentSinglePage"
 import InstrumentCreateOrEdit from "./pages/instrument/InstrumentCreateOrEdit"
+
 import SongsPage from "./pages/song/SongsPage"
 import SongCreateOrEdit from "./pages/song/SongCreateOrEdit"
 import SongSinglePage from "./pages/song/SongSinglePage"
+
 import MusiciansPage from "./pages/musician/MusiciansPage"
 import MusicianCreateOrEdit from "./pages/musician/MusicianCreateOrEdit"
 import MusicianSinglePage from "./pages/musician/MusicianSinglePage"
+
+import UsersPage from "./pages/user/UsersPage"
+import UserCreateOrEdit from "./pages/user/UserCreateOrEdit"
+import UserSinglePage from "./pages/user/UserSinglePage"
 
 
 function App() {
@@ -42,7 +51,25 @@ function App() {
 
             <Route path="/people" element={<PeopleCats />} />
             
-            <Route path="/people/user" element={<p>Users</p>} />
+            <Route path="/people/user" element={<UsersPage />} />
+            <Route path="/people/user/add" element={
+              <>
+                <UsersPage />
+                <UserCreateOrEdit />
+              </>
+            } />
+            <Route path="/people/user/:id" element={
+              <>
+                <UsersPage />
+                <UserSinglePage />
+              </>
+            } />
+            <Route path="/people/user/:id/edit" element={
+              <>
+                <UsersPage />
+                <UserCreateOrEdit />
+              </>
+            } />
             
             <Route path="/people/musician" element={<MusiciansPage />} />
             <Route path="/people/musician/add" element={
