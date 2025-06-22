@@ -37,6 +37,9 @@ import MusicianSinglePage from "./pages/musician/MusicianSinglePage"
 import UsersPage from "./pages/user/UsersPage"
 import UserCreateOrEdit from "./pages/user/UserCreateOrEdit"
 import UserSinglePage from "./pages/user/UserSinglePage"
+import BandsPage from "./pages/band/BandsPage"
+import BandCreateOrEdit from "./pages/band/BandCreateOrEdit"
+import BandSinglePage from "./pages/band/BandSinglePage"
 
 
 function App() {
@@ -91,8 +94,25 @@ function App() {
               </>
             } />
 
-            <Route path="/people/band" element={<p>Bands</p>} />
-
+            <Route path="/people/band" element={<BandsPage />} />
+            <Route path="/people/band/add" element={
+              <>
+                <BandsPage />
+                <BandCreateOrEdit />
+              </>
+            } />
+            <Route path="/people/band/:id" element={
+              <>
+                <BandsPage />
+                <BandSinglePage />
+              </>
+            } />
+            <Route path="/people/band/:id/edit" element={
+              <>
+                <BandsPage />
+                <BandCreateOrEdit />
+              </>
+            } />
             
             <Route path="/instrument" element={<InstrumentCats />} />
             

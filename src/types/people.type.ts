@@ -38,5 +38,11 @@ export interface IMusicianNested extends DocumentData {
 export interface IBand extends DocumentData {
   id: string;
   name: string;
+  musicians: string[]
+}
+
+export interface IBandNested extends DocumentData {
+  id: string;
+  name: string;
   musicians: IMusician[]
 }
