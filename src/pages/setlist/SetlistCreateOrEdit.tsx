@@ -76,11 +76,10 @@ function SetlistCreateOrEdit() {
     try {
       // Create
       if (!id) {
-
         // fait appel à l'algorithme KESKONJOU (c) !
         const generatedSetlist = generateSetlist({
           duration: setlist.duration,
-          acceptedLimit: setlist.acceptedLimit,
+          acceptedLimit: acceptedLimit,
           songs,
         });
 

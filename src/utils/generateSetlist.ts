@@ -15,38 +15,67 @@ function generateSetlist({
   songs: ISong[]
 }) {
 
-  const setlist : ISong[] = [];
+  // Accumulateurs liste et durée
+  const setlist: ISong[] = [];
   let currentDuration = 0;
   
-  function pickRandomSongAndRemoveItFromList(list : ISong[]) {
-    const randIndex = Math.round(Math.random() * (list.length - 1))
+
+  // Factorisation du processus
+  function pickRndAndUpdate(list: ISong[]) {
+    // Pick random index
+    let randIndex = Math.round(Math.random() * (list.length - 1))
+    if (randIndex < 0) randIndex = 0;
+    // Pick a tune
     const tune = list[randIndex];
+    // Update duration
     currentDuration += tune.duration!;
+    // met la tune dans la setlist
     setlist.push(tune);
+    // retire la tune de la liste
     list.splice(randIndex, 1)
   }
 
-  // Remplit la setlist au-delà de la limite
-  while (currentDuration <= duration || songs.length > 0)
-    pickRandomSongAndRemoveItFromList(songs);
+  // Remplit la setlist au-delà de la limite, tant qu'il y a des chansons, et que leur durée suffira
+  while (
+    currentDuration <= duration &&
+    songs.length !== 0
+  ) pickRndAndUpdate(songs);
 
   // Si la durée actuelle se situe dans la fourchette de la limite acceptée, c'est bon
-  if (currentDuration > (duration - acceptedLimit) && currentDuration < (duration + acceptedLimit))
+  if (currentDuration >= (duration - acceptedLimit)
+    && currentDuration <= (duration + acceptedLimit)
+  ) {
+    return setlist
+  };
+
+  // On a dépassé la limite acceptable
+  // S'il ne reste aucune chanson dont la durée nous ramène
+  // à un interval plus petit que l'actuel,
+  // par rapport au point visé, on laisse tomber
+  const lastTune = setlist[setlist.length - 1];
+  if (!songs.some(song =>
+    duration - (song.duration! + currentDuration - lastTune.duration!) < currentDuration - duration
+  ))
     return setlist;
 
   // Sinon, retire la dernière chanson et diminue la durée totale de celle-ci
-  const lastTune = setlist[setlist.length - 1]
-  currentDuration -= lastTune.duration!;
+  // if (currentDuration - lastTune.duration! < )
+  currentDuration -= lastTune!.duration!;
   setlist.pop();
 
-  // Cherche les possibilités en regardant la durée des chansons restantes
-  const possibilitiesLeft = songs.filter((tune) => tune.duration! <= duration - currentDuration)
+  if (songs.length === 0) return setlist
 
-  // Si aucune, arrêter
-  if (possibilitiesLeft.length < 1) return setlist;
+  // S'il ne reste aucune possibilité d'une chanson avec une durée complétant ce qui reste du temps total
+  // dans la limite acceptée, arrêter
+  if (!songs.some(song => song.duration! <= (duration - currentDuration) + acceptedLimit)) return setlist;
 
-  // Sinon, reprendre
-  pickRandomSongAndRemoveItFromList(possibilitiesLeft);
+  // Sinon, trier les possibilités restantes, et filtrer une dernière fois
+  const optionsLeft = songs.filter(song => song.duration! <= duration - currentDuration + acceptedLimit);
+
+  // Tant que leftOptions a une song avec une durée convenable, on continue
+  while (optionsLeft.some(song => song.duration! <= duration - currentDuration + acceptedLimit))
+    pickRndAndUpdate(optionsLeft);
+
   return setlist;
 }
 
