@@ -9,6 +9,7 @@ import {
   orderBy,
   query,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '../client';
 import type { IMusician, IMusicianNested } from '../../types/people.type';
@@ -60,6 +61,27 @@ export function useMusicians() {
 
   async function deleteMusician(id: string) {
     const ref = doc(db, "musicians", id);
+
+    // Update par cascade les users
+    const userRef = collection(db, "users")
+    const targetUsers = await getDocs(query(userRef,
+      where('musicianId', "==", id)
+    ))
+    targetUsers.docs.forEach(snap =>
+      updateDoc(snap.ref, {
+        musicianId: ""
+      }))
+
+    // Update par cascade les bands
+    const bandRef = collection(db, "bands")
+    const targetBands = await getDocs(query(bandRef,
+      where('musicians', "array-contains", id)
+    ))
+    targetBands.docs.forEach(snap =>
+      updateDoc(snap.ref, {
+        musicians: snap.data().musicians.filter((musicianId: string) => musicianId !== id)
+      }))
+
     return deleteDoc(ref);
   }
 

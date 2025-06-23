@@ -20,7 +20,7 @@ function UserSinglePage() {
     // eslint-disable-next-line no-restricted-globals
     if (!confirm("Voulez-vous vraiment supprimer ce user ?")) return;
     await deleteUser(id!);
-    navigate("/gig/user");
+    navigate("/people/user");
   }
 
   useEffect(() => {
