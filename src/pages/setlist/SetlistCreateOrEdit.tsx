@@ -1,14 +1,16 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState, type FormEvent } from "react";
 
-import type { ISetlist, ISong } from "../../types/song.type";
 import { useSetlists } from "../../hooks/songs/setlistHooks";
-
-import BackBtn from "../../components/backBtn/backBtn";
 import { useInstruments } from "../../hooks/instruments/instrumentHooks";
+import { useSongs } from "../../hooks/songs/songHooks";
+
+import type { ISetlist, ISong } from "../../types/song.type";
 import type { IInstrument } from "../../types/instrument.type";
 import generateSetlist from "../../utils/generateSetlist";
-import { useSongs } from "../../hooks/songs/songHooks";
+
+import BackBtn from "../../components/backBtn/backBtn";
+
 
 
 const emptySetlist: ISetlist = {
@@ -59,10 +61,16 @@ function SetlistCreateOrEdit() {
 
   function handleInstruments(e: FormEvent<HTMLInputElement>) {
     if (e.currentTarget.checked)
-      setSetlist({ ...setlist, instrumentsNotRequired: [...setlist.instrumentsNotRequired!, e.currentTarget.value] })
+      setSetlist({
+        ...setlist,
+        instrumentsNotRequired: [...setlist.instrumentsNotRequired!, e.currentTarget.value]
+      })
 
     if (!e.currentTarget.checked)
-      setSetlist({ ...setlist, instrumentsNotRequired: setlist.instrumentsNotRequired!.filter(ins => ins !== e.currentTarget.value) })
+      setSetlist({
+        ...setlist,
+        instrumentsNotRequired: setlist.instrumentsNotRequired!.filter(ins => ins !== e.currentTarget.value)
+      })
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -74,30 +82,40 @@ function SetlistCreateOrEdit() {
     };
 
     try {
+
       // Create
       if (!id) {
+
+        // Filtre les songs qui contiennent TOUS les instruments non requis pour la playlist
+        const filteredSongs = songs.filter(song =>
+          setlist.instrumentsNotRequired.every(instrumentId =>
+            song.instrumentsNotRequired?.includes(instrumentId)
+          ))
+
         // fait appel à l'algorithme KESKONJOU (c) !
         const generatedSetlist = generateSetlist({
           duration: setlist.duration,
           acceptedLimit: acceptedLimit,
-          songs,
+          songs: filteredSongs,
         });
 
-        const init = 0;
-        const totalDuration = generatedSetlist.reduce((acc, current) => acc + current.duration!, init);
+        // Additionne le temps total obtenu (après utilisation de la fn génératrice)
+        const totalDuration = generatedSetlist.reduce(
+          (acc, current) => acc + current.duration!, 0
+        );
 
         const data = {
           title: setlist.title,
           duration: totalDuration,
           instrumentsNotRequired: setlist.instrumentsNotRequired,
-          songs: generatedSetlist.map(song => song.id) // On ne garde que l'ID
+          songs: generatedSetlist.map(song => song.id) // On ne garde que les ID
         }
 
         const result = await createSetlist(data);
         if (result) id = result.id;
       }
 
-      // Update
+      // Update -- on ne met à jour que le titre
       if (id) {
         const data = {
           title: setlist.title,
