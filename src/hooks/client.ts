@@ -6,7 +6,7 @@ import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDVaX6k_imZqbOziqntTWeB3YmqZ1qlop0",
+  apiKey: import.meta.env.VITE_APP_FIREBASE_ERIC,
   authDomain: "fir-crud-restapi-9f6b9.firebaseapp.com",
   projectId: "fir-crud-restapi-9f6b9",
   storageBucket: "fir-crud-restapi-9f6b9.firebasestorage.app",
@@ -18,7 +18,7 @@ const firebaseConfig = {
 // // Your web app's Firebase configuration
 // // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 // const firebaseConfig = {
-//   apiKey: import.meta.env.VITE_APP_FIREBASE_ERIC,
+//   apiKey: import.meta.env.VITE_APP_FIREBASE_URL,
 //   authDomain: "keskonjou-7ab1a.firebaseapp.com",
 //   projectId: "keskonjou-7ab1a",
 //   storageBucket: "keskonjou-7ab1a.firebasestorage.app",
