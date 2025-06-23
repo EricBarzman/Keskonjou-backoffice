@@ -41,3 +41,12 @@ export interface ISetlist extends DocumentData {
   songs: string[];
   createdAt: Date;
 }
+
+export interface ISetlistNested extends DocumentData {
+  id: string;
+  title: string;
+  duration: number;
+  instrumentsNotRequired: IInstrument[];
+  songs: ISong[];
+  createdAt: Date;
+}

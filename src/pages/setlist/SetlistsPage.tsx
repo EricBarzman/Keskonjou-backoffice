@@ -29,7 +29,7 @@ function SetlistsPage() {
         <BackBtn to="/song" label="Song catégories" />
       </div>
 
-      <CreateBtn link="/setlist/setlist/add" />
+      <CreateBtn link="/song/setlist/add" />
 
       {/* Table liste */}
       {setlists.length > 0 && (

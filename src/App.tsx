@@ -41,6 +41,8 @@ import BandsPage from "./pages/band/BandsPage"
 import BandCreateOrEdit from "./pages/band/BandCreateOrEdit"
 import BandSinglePage from "./pages/band/BandSinglePage"
 import SetlistsPage from "./pages/setlist/SetlistsPage"
+import SetlistCreateOrEdit from "./pages/setlist/SetlistCreateOrEdit"
+import SetlistSinglePage from "./pages/setlist/SetlistSinglePage"
 
 
 function App() {
@@ -227,19 +229,19 @@ function App() {
             <Route path="/song/setlist/add" element={
               <>
                 <SetlistsPage />
-                <MoodCreateOrEdit />
+                <SetlistCreateOrEdit />
               </>
             } />
             <Route path="/song/setlist/:id" element={
               <>
                 <SetlistsPage />
-                <MoodSinglePage />
+                <SetlistSinglePage />
               </>
             } />
             <Route path="/song/setlist/:id/edit" element={
               <>
                 <SetlistsPage />
-                <MoodCreateOrEdit />
+                <SetlistCreateOrEdit />
               </>
             } />
 

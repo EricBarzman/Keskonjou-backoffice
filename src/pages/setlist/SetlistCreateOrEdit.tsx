@@ -1,117 +1,113 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState, type FormEvent } from "react";
 
-import type { IMood, ISong, IStyle } from "../../types/song.type";
-import { useSongs } from "../../hooks/songs/songHooks";
+import type { ISetlist, ISong } from "../../types/song.type";
+import { useSetlists } from "../../hooks/songs/setlistHooks";
 
 import BackBtn from "../../components/backBtn/backBtn";
-import { useStyles } from "../../hooks/songs/styleHooks";
-import { useMoods } from "../../hooks/songs/moodHooks";
 import { useInstruments } from "../../hooks/instruments/instrumentHooks";
 import type { IInstrument } from "../../types/instrument.type";
+import generateSetlist from "../../utils/generateSetlist";
+import { useSongs } from "../../hooks/songs/songHooks";
 
-const emptySong = {
+
+const emptySetlist: ISetlist = {
   id: "",
   title: "",
-  styleId: "",
-  moodId: "",
   duration: 0,
   instrumentsNotRequired: [],
-  hasSolo: false,
-  partitionPath: "",
+  songs: [],
+  createdAt: new Date(),
 }
 
-function SongCreateOrEdit() {
+function SetlistCreateOrEdit() {
 
   let { id } = useParams();
-
   const location = useLocation();
-
   const navigate = useNavigate();
-  const { createSong, updateSong, getSongById } = useSongs();
 
-  const { getStyles } = useStyles();
-  const { getMoods } = useMoods();
+  const { createSetlist, getSetlistById, updateSetlist } = useSetlists();
   const { getInstruments } = useInstruments();
+  const { getSongs } = useSongs();
 
-  const [song, setSong] = useState<ISong>(emptySong);
+  const [setlist, setSetlist] = useState<ISetlist>(emptySetlist);
+
+  const [instruments, setInstruments] = useState<IInstrument[]>([]);
+  const [songs, setSongs] = useState<ISong[]>([]);
 
   const [durationInMin, setDurationInMin] = useState(0);
   const [durationInSec, setDurationInSec] = useState(0);
-
-  const [styles, setStyles] = useState<IStyle[]>([]);
-  const [moods, setMoods] = useState<IMood[]>([]);
-  const [instruments, setInstruments] = useState<IInstrument[]>([]);
+  const [acceptedLimit, setAcceptedLimit] = useState(0);
 
   useEffect(() => {
-    if (id) getSongById(id).then(song => {
-      setSong(song);
-      setDurationInMin(Math.floor(song.duration! / 60));
-      setDurationInSec(Math.floor(song.duration! % 60));
-    });
-    getMoods().then(it => setMoods(it));
-    getStyles().then(it => setStyles(it));
-    getInstruments().then(it => setInstruments(it));
+    if (id) getSetlistById(id).then(setlist => setSetlist(setlist));
+    getInstruments().then(ins => setInstruments(ins));
+    getSongs().then(songs => setSongs(songs));
   }, [])
 
   // Reset everything (specially if user click "create" button)
   useEffect(() => {
-    setSong(emptySong);
-    setDurationInMin(0);
-    setDurationInSec(0);
+    setSetlist(emptySetlist);
   }, [location])
+
 
   // Alter duration
   useEffect(() => {
-    setSong({ ...song, duration: (durationInMin * 60) + durationInSec })
+    setSetlist({ ...setlist, duration: (durationInMin * 60) + durationInSec })
   }, [durationInMin, durationInSec])
+
 
   function handleInstruments(e: FormEvent<HTMLInputElement>) {
     if (e.currentTarget.checked)
-      setSong({ ...song, instrumentsNotRequired: [...song.instrumentsNotRequired!, e.currentTarget.value] })
+      setSetlist({ ...setlist, instrumentsNotRequired: [...setlist.instrumentsNotRequired!, e.currentTarget.value] })
 
     if (!e.currentTarget.checked)
-      setSong({ ...song, instrumentsNotRequired: song.instrumentsNotRequired!.filter(ins => ins !== e.currentTarget.value) })
-  }
-
-  function handleSolo(e: FormEvent<HTMLInputElement>) {
-    if (e.currentTarget.checked)
-      setSong({ ...song, hasSolo: true })
-    if (!e.currentTarget.checked)
-      setSong({ ...song, hasSolo: false })
+      setSetlist({ ...setlist, instrumentsNotRequired: setlist.instrumentsNotRequired!.filter(ins => ins !== e.currentTarget.value) })
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault(); // youpi
+    e.preventDefault();
 
-    if (song?.title === undefined) {
+    if (setlist?.title === undefined) {
       alert("Veuillez remplir un titre");
       return
     };
 
-    const data = {
-      title: song.title,
-      duration: song.duration,
-      styleId: song.styleId,
-      moodId: song.moodId,
-      instrumentsNotRequired: song.instrumentsNotRequired,
-      hasSolo: song.hasSolo,
-      partitionPath: song.partitionPath,
-    }
-
     try {
       // Create
       if (!id) {
-        const result = await createSong(data);
+
+        // fait appel à l'algorithme KESKONJOU (c) !
+        const generatedSetlist = generateSetlist({
+          duration: setlist.duration,
+          acceptedLimit: setlist.acceptedLimit,
+          songs,
+        });
+
+        const init = 0;
+        const totalDuration = generatedSetlist.reduce((acc, current) => acc + current.duration!, init);
+
+        const data = {
+          title: setlist.title,
+          duration: totalDuration,
+          instrumentsNotRequired: setlist.instrumentsNotRequired,
+          songs: generatedSetlist.map(song => song.id) // On ne garde que l'ID
+        }
+
+        const result = await createSetlist(data);
         if (result) id = result.id;
       }
 
       // Update
-      if (id)
-        await updateSong(id, data);
+      if (id) {
+        const data = {
+          title: setlist.title,
+        }
+        await updateSetlist(id, data);
+      }
 
       // Go to the newly created/updated entry
-      navigate(`/song/song/${id}`);
+      navigate(`/song/setlist/${id}`);
 
     } catch (error) {
       console.error(error);
@@ -119,97 +115,78 @@ function SongCreateOrEdit() {
   }
 
   return (
-    <aside className='py-6 px-20 border-l w-1/3'>
+    <aside className='py-6 px-20 border-l w-1/2'>
       <div>
-        <h3 className='font-bold text-xl mb-10'>{song.name}</h3>
+        <h3 className='font-bold text-xl mb-10'>{setlist.title}</h3>
         <form className="p-4 flex flex-col" onSubmit={handleSubmit}>
 
           <label className="mt-4 mb-2 text-sm font-semibold">Title</label>
           <input
             type="text"
-            onChange={(e) => setSong({ ...song, title: e.target.value })}
+            onChange={(e) => setSetlist({ ...setlist, title: e.target.value })}
             className="border-2 p-2 border-gray-200"
-            defaultValue={undefined}
-            value={song.title}
+            value={setlist.title}
             placeholder="Title..."
           />
+          {!id && (
+            <div className="mt-4">
+              <label className="mt-4 mb-2 text-sm font-semibold">Duration</label>
+              <div className="flex flex-col">
+                <div>
+                  <label className="mr-2 text-xs font-semibold">Minutes</label>
+                  <input
+                    min={0}
+                    type="number"
+                    onChange={(e) => setDurationInMin(parseInt(e.target.value))}
+                    className="border-2 p-2 mb-2 w-1/3 border-gray-200"
+                    value={durationInMin}
+                    placeholder="min..."
+                  />
+                </div>
+                <div>
+                  <label className="mr-2 text-xs font-semibold">Seconds</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={59}
+                    onChange={(e) => setDurationInSec(parseInt(e.target.value))}
+                    className="border-2 p-2 w-1/3 border-gray-200"
+                    value={durationInSec}
+                    placeholder="secs..."
+                  />
+                </div>
+              </div>
 
-          <label className="mt-4 mb-2 text-sm font-semibold">Duration</label>
-          <div className="flex flex-col">
-            <div>
-              <label className="mr-2 text-xs font-semibold">Minutes</label>
-              <input
-                min={0}
-                type="number"
-                onChange={(e) => setDurationInMin(parseInt(e.target.value))}
-                className="border-2 p-2 mb-2 w-1/3 border-gray-200"
-                value={durationInMin}
-                placeholder="min..."
-              />
-            </div>
-            <div>
-              <label className="mr-2 text-xs font-semibold">Seconds</label>
-              <input
-                type="number"
-                min={0}
-                max={59}
-                onChange={(e) => setDurationInSec(parseInt(e.target.value))}
-                className="border-2 p-2 w-1/3 border-gray-200"
-                value={durationInSec}
-                placeholder="secs..."
-              />
-            </div>
-          </div>
-
-          <label className="mt-4 mb-2 text-sm font-semibold">Mood</label>
-          <select
-            onChange={(e) => setSong({ ...song, moodId: e.currentTarget.value })}
-            className="border-2 p-2 border-gray-200"
-            value={song.moodId}
-          >
-            <option value="">Choisir un mood</option>
-            {moods.map(mood => (
-              <option key={mood.id} value={mood.id}>{mood.name}</option>
-            ))}
-          </select>
-
-          <label className="mt-4 mb-2 text-sm font-semibold">Style</label>
-          <select
-            onChange={(e) => setSong({ ...song, styleId: e.currentTarget.value })}
-            className="border-2 p-2 border-gray-200"
-            value={song.styleId}
-          >
-            <option value="">Choisir un style</option>
-            {styles.map((style) => (
-              <option key={style.id} value={style.id}>{style.name}</option>
-            ))}
-          </select>
-
-          <label className="mt-4 mb-2 text-sm font-semibold">Instruments NOT required</label>
-          <div className="grid grid-cols-2 gap-2">
-            {instruments.map(instrument =>
-              <div key={instrument.id}>
-                <label className="mt-4">{instrument.name}</label>
+              <div className="flex flex-col mb-4">
+                <label className="mt-4 mb-2 text-sm font-semibold">Accepted limit (in seconds)</label>
                 <input
-                  type="checkbox"
-                  defaultChecked={song.instrumentsNotRequired?.includes(instrument.id)}
-                  onChange={handleInstruments}
-                  className="w-[10] h-[10]"
-                  value={instrument.id}
+                  min={0}
+                  type="number"
+                  onChange={(e) => setAcceptedLimit(parseInt(e.target.value))}
+                  className="border-2 p-2 mb-2 w-1/3 border-gray-200"
+                  value={acceptedLimit}
+                  placeholder="secs..."
                 />
               </div>
-            )}
-          </div>
 
-          <div className="mt-4">
-            <label className="mr-2 text-sm font-semibold">Is there a solo?</label>
-            <input
-              type="checkbox"
-              checked={song.hasSolo}
-              className="border-2 p-2 border-gray-200"
-              onClick={handleSolo}
-            />
-          </div>
+              <label className="mt-4 mb-2 text-sm font-semibold">Instruments NOT required</label>
+              <div className="grid grid-cols-3 gap-2">
+                {instruments.map(instrument =>
+                  <div key={instrument.id}>
+                    <label className="mt-4">{instrument.name}</label>
+                    <input
+                      type="checkbox"
+                      defaultChecked={setlist.instrumentsNotRequired?.includes(instrument.id)}
+                      onChange={handleInstruments}
+                      className="w-[10] h-[10]"
+                      value={instrument.id}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
 
           <button className="cursor-pointer mt-6 rounded-lg p-2 text-white bg-teal-500 hover:bg-teal-600" type="submit">
             OK
@@ -218,15 +195,17 @@ function SongCreateOrEdit() {
           {/* Abandon */}
           <div className="mt-4">
 
-            {id && <BackBtn to={`/song/song/${id}`} label="Song" />}
+            {id && <BackBtn to={`/song/setlist/${id}`} label="Setlist" />}
 
-            {!id && <BackBtn to="/song/song" label="Song" />}
+            {!id && <BackBtn to="/song/setlist" label="Setlist" />}
           </div>
 
         </form>
       </div>
+
+
     </aside >
   )
 }
 
-export default SongCreateOrEdit
+export default SetlistCreateOrEdit

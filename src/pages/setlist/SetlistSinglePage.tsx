@@ -1,38 +1,38 @@
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { useSongs } from "../../hooks/songs/songHooks";
-import type { ISongNested } from "../../types/song.type"
+import { useSetlists } from "../../hooks/songs/setlistHooks";
+import type { ISetlistNested } from "../../types/song.type"
 
 import BackBtn from "../../components/backBtn/backBtn";
 
-function SongSinglePage() {
+function SetlistSinglePage() {
 
-  const [song, setSong] = useState<ISongNested>();
+  const [setlist, setSetlist] = useState<ISetlistNested>();
   const { id } = useParams();
   const location = useLocation();
 
-  const { getSongByIdNested, deleteSong } = useSongs();
+  const { getSetlistByIdNested, deleteSetlist } = useSetlists();
 
   const navigate = useNavigate();
 
   async function handleDelete() {
     // eslint-disable-next-line no-restricted-globals
-    if (!confirm("Voulez-vous vraiment supprimer ce song ?")) return;
-    await deleteSong(id!);
-    navigate("/gig/song");
+    if (!confirm("Voulez-vous vraiment supprimer ce setlist ?")) return;
+    await deleteSetlist(id!);
+    navigate("/song/setlist");
   }
 
   useEffect(() => {
-    getSongByIdNested(id!).then(data => setSong(data));
+    getSetlistByIdNested(id!).then(data => setSetlist(data));
   }, [location])
 
-  if (!song) return <h2>Song non trouvé</h2>
+  if (!setlist) return <h2>Setlist non trouvé</h2>
 
   return (
-    <aside className='py-6 px-20 border-l w-1/3'>
+    <aside className='py-6 px-20 border-l w-2/3'>
 
-      <h3 className='font-bold text-xl mb-6'>{song.name}</h3>
+      <h3 className='font-bold text-xl mb-6'>{setlist.name}</h3>
 
       {/* Table One */}
       <div className='py-6 mb-4 flex flex-col'>
@@ -41,30 +41,36 @@ function SongSinglePage() {
             <tr>
               <th className="border capitalize border-gray-500 p-3">Title</th>
               <th className="border capitalize border-gray-500 p-3">Duration</th>
-              <th className="border capitalize border-gray-500 p-3">Style</th>
-              <th className="border capitalize border-gray-500 p-3">Mood</th>
-              <th className="border capitalize border-gray-500 p-3">Instruments NOT required</th>
-              <th className="border capitalize border-gray-500 p-3">Is there a solo?</th>
-              <th className="border capitalize border-gray-500 p-3">Partition path</th>
+              <th className="border capitalize border-gray-500 p-3">Instru NOT required</th>
+              <th className="border capitalize border-gray-500 p-3">Setlist of songs</th>
               <th className="border border-gray-500 p-3">Action</th>
             </tr>
           </thead>
           <tbody>
             <tr >
-              <td className="border border-gray-500 p-3">{song.title}</td>
+
               <td className="border border-gray-500 p-3">
-                {!song.duration ? "Non indiqué" : `${Math.floor(song.duration / 60)} min ${song.duration % 60} sec` }
+                {setlist.title}
               </td>
-              <td className="border border-gray-500 p-3">{song.style.name}</td>
-              <td className="border border-gray-500 p-3">{song.mood.name}</td>
+
               <td className="border border-gray-500 p-3">
-                {song.instrumentsNotRequired?.length === 0
-                  ? "N/A"
-                  : song.instrumentsNotRequired!.map(i => i.name).join(", ")}
+                {!setlist.duration ? "Non indiqué" : `${Math.floor(setlist.duration / 60)} min ${setlist.duration % 60} sec`}
               </td>
-              <td className="border border-gray-500 p-3">{song.hasSolo ? "Yes" : "No"}</td>
-              <td className="border border-gray-500 p-3">{song.partitionPath !== "" ? song.partitionPath : "N/A"}</td>
-              
+
+              <td className="border border-gray-500 p-3">
+                {setlist.instrumentsNotRequired?.length === 0
+                  ? "-"
+                  : setlist.instrumentsNotRequired!.map(i => i.name).join(", ")}
+              </td>
+
+              <td className="border border-gray-500 p-3">
+                <ol>
+                  {setlist.songs.map(song =>
+                    <li><span>{Math.floor(song.duration! / 60)} mn {song.duration! % 60}: </span> {song.title}</li>
+                  )}
+                </ol>
+              </td>
+
               <td className="border border-gray-500 p-3 hover:bg-teal-100">
                 <Link to={`edit`}>Editer</Link>
               </td>
@@ -73,7 +79,7 @@ function SongSinglePage() {
         </table>
       </div>
 
-      <BackBtn to="/song/song" label="Song" />
+      <BackBtn to="/song/setlist" label="Setlist" />
 
       <button
         className="p-3 mt-8 bg-red-700 rounded-lg text-white hover:bg-red-800"
@@ -86,4 +92,4 @@ function SongSinglePage() {
   )
 }
 
-export default SongSinglePage
+export default SetlistSinglePage
