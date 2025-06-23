@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../client';
 import type { IGig, IGigNested } from '../../types/gig.type';
+import firebaseTimeToJs from '../../utils/firebaseTimeToJs';
 
 
 export function useGigs() {
@@ -72,6 +73,7 @@ export function useGigs() {
       costumes,
       bands,
       setlists,
+      date: firebaseTimeToJs(snap.data()!.date)
     } as unknown as IGigNested
   }
 

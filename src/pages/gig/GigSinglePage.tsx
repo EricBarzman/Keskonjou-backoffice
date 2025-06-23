@@ -29,6 +29,7 @@ function GigSinglePage() {
 
   if (!gig) return <h2>Gig non trouvé</h2>
 
+
   return (
     <aside className='py-6 px-20 border-l w-1/3'>
 
@@ -61,7 +62,7 @@ function GigSinglePage() {
               </td>
 
               <td className="border border-gray-500 p-3">
-                {/* {new Date(gig.date.seconds).getUTCDate()} */}
+                {gig.date.toLocaleDateString("fr-FR")}
               </td>
 
               <td className="border border-gray-500 p-3">

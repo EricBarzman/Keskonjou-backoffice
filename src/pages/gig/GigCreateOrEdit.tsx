@@ -20,7 +20,7 @@ const emptyGig: IGig = {
   setlists: [],
   costumes: [],
   bands: [],
-  date: new Date(),
+  date: null,
 }
 
 function GigCreateOrEdit() {
@@ -63,7 +63,7 @@ function GigCreateOrEdit() {
     if (!e.currentTarget.checked)
       setGig({
         ...gig,
-        [e.currentTarget.name]: gig[e.currentTarget.name].filter((id : string) => id !== e.currentTarget.value)
+        [e.currentTarget.name]: gig[e.currentTarget.name].filter((id: string) => id !== e.currentTarget.value)
       })
   }
 
@@ -72,6 +72,11 @@ function GigCreateOrEdit() {
 
     if (gig?.title === undefined) {
       alert("Veuillez remplir un titre");
+      return
+    };
+
+    if (gig?.date === null) {
+      alert("Veuillez remplir une date");
       return
     };
 

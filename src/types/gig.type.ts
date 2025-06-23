@@ -14,7 +14,7 @@ export interface IGig extends DocumentData {
   setlists : string[];
   costumes: string[];
   bands: string[];
-  date: Date;
+  date: Date | null;
 }
 
 export interface IGigNested extends DocumentData {
