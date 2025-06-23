@@ -43,6 +43,9 @@ import BandSinglePage from "./pages/band/BandSinglePage"
 import SetlistsPage from "./pages/setlist/SetlistsPage"
 import SetlistCreateOrEdit from "./pages/setlist/SetlistCreateOrEdit"
 import SetlistSinglePage from "./pages/setlist/SetlistSinglePage"
+import GigsPage from "./pages/gig/GigsPage"
+import GigCreateOrEdit from "./pages/gig/GigCreateOrEdit"
+import GigSinglePage from "./pages/gig/GigSinglePage"
 
 
 function App() {
@@ -246,7 +249,26 @@ function App() {
             } />
 
             <Route path="/gig" element={<GigCats />} />
-            <Route path="/gig/gig" element={<p>Gig</p>} />
+            
+            <Route path="/gig/gig" element={<GigsPage />} />
+            <Route path="/gig/gig/add" element={
+              <>
+                <GigsPage />
+                <GigCreateOrEdit />
+              </>
+            } />
+            <Route path="/gig/gig/:id" element={
+              <>
+                <GigsPage />
+                <GigSinglePage />
+              </>
+            } />
+            <Route path="/gig/gig/:id/edit" element={
+              <>
+                <GigsPage />
+                <GigCreateOrEdit />
+              </>
+            } />
             
             <Route path="/gig/costume" element={<CostumesPage />} />
             <Route path="/gig/costume/add" element={

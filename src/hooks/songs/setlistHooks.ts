@@ -1,5 +1,6 @@
 import {
   type DocumentData,
+  Timestamp,
   addDoc,
   collection,
   deleteDoc,
@@ -57,7 +58,10 @@ export function useSetlists() {
 
   async function createSetlist(data: DocumentData) {
     const ref = collection(db, "setlists");
-    return addDoc(ref, data);
+    return addDoc(ref, {
+      ...data,
+      createdAt: Timestamp.fromDate(new Date())
+    });
   }
 
   async function updateSetlist(id: string, data: DocumentData) {
