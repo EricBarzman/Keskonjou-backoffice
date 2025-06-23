@@ -3,6 +3,8 @@ import type { IInstrumentNested } from "../../types/instrument.type";
 
 function InstrumentTableOne({ instrument }: { instrument: IInstrumentNested }) {
 
+  console.log(instrument)
+
   return (
     <table className="border-collapse text-left">
       <thead>
@@ -16,7 +18,7 @@ function InstrumentTableOne({ instrument }: { instrument: IInstrumentNested }) {
       <tbody>
         <tr >
           <td className="border border-gray-500 p-3">{instrument.name}</td>
-          <td className="border border-gray-500 p-3">{instrument.family.name}</td>
+          <td className="border border-gray-500 p-3">{instrument.family !== null ? instrument.family.name : "-"}</td>
           <td className="border border-gray-500 p-3">{instrument.id}</td>
           <td className="border border-gray-500 p-3 hover:bg-teal-100">
             <Link to={`edit`}>Editer</Link>

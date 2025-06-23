@@ -20,7 +20,7 @@ function SongSinglePage() {
     // eslint-disable-next-line no-restricted-globals
     if (!confirm("Voulez-vous vraiment supprimer ce song ?")) return;
     await deleteSong(id!);
-    navigate("/song/song");
+    navigate("/gig/song");
   }
 
   useEffect(() => {
@@ -51,36 +51,19 @@ function SongSinglePage() {
           </thead>
           <tbody>
             <tr >
-
-              <td className="border border-gray-500 p-3">
-                {song.title}
-              </td>
-
+              <td className="border border-gray-500 p-3">{song.title}</td>
               <td className="border border-gray-500 p-3">
                 {!song.duration ? "Non indiqué" : `${Math.floor(song.duration / 60)} min ${song.duration % 60} sec` }
               </td>
-
-              <td className="border border-gray-500 p-3">
-                {song.style ? song.style.name : "-"}
-              </td>
-
-              <td className="border border-gray-500 p-3">
-                {song.mood ? song.mood.name : "-"}
-              </td>
-
+              <td className="border border-gray-500 p-3">{song.style.name}</td>
+              <td className="border border-gray-500 p-3">{song.mood.name}</td>
               <td className="border border-gray-500 p-3">
                 {song.instrumentsNotRequired?.length === 0
                   ? "N/A"
                   : song.instrumentsNotRequired!.map(i => i.name).join(", ")}
               </td>
-
-              <td className="border border-gray-500 p-3">
-                {song.hasSolo ? "Yes" : "No"}
-              </td>
-
-              <td className="border border-gray-500 p-3">
-                {song.partitionPath !== "" ? song.partitionPath : "-"}
-              </td>
+              <td className="border border-gray-500 p-3">{song.hasSolo ? "Yes" : "No"}</td>
+              <td className="border border-gray-500 p-3">{song.partitionPath !== "" ? song.partitionPath : "N/A"}</td>
               
               <td className="border border-gray-500 p-3 hover:bg-teal-100">
                 <Link to={`edit`}>Editer</Link>

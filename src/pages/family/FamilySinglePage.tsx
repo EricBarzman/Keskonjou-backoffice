@@ -19,7 +19,7 @@ function FamilySinglePage() {
 
   async function handleDelete() {
     // eslint-disable-next-line no-restricted-globals
-    if (!confirm("Voulez-vous vraiment supprimer ce family ?")) return;
+    if (!confirm("Voulez-vous vraiment supprimer cette family ? Cela entraînera une modification des instruments liés")) return;
     await deleteFamily(id!);
     navigate("/instrument/family");
   }

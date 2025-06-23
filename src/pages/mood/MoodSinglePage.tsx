@@ -17,7 +17,7 @@ function MoodSinglePage() {
 
   async function handleDelete() {
     // eslint-disable-next-line no-restricted-globals
-    if (!confirm("Voulez-vous vraiment supprimer ce mood ?")) return;
+    if (!confirm("Voulez-vous vraiment supprimer ce mood ? Cela entraînera une modification des songs liées")) return;
     await deleteMood(id!);
     navigate("/song/mood");
   }

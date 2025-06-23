@@ -39,29 +39,45 @@ export function useSongs() {
     const snap = await getDoc(ref);
 
     // Get external attributes --eg join--
-    const refStyle = doc(db, "styles", snap.data()!.styleId)
-    const style = await getDoc(refStyle);
+    // Style
+    let style;
+    if (!snap.data()!.styleId) style = null;
+    else {
+      const refStyle = doc(db, "styles", snap.data()!.styleId)
+      style = await getDoc(refStyle);
+    }
+    // Mood
+    let mood;
+    if (!snap.data()!.moodId) mood = null;
+    else {
+      const refMood = doc(db, "moods", snap.data()!.moodId)
+      mood = await getDoc(refMood);
+    }
+    // Instruments
+    let selectedInstruments: unknown = [];
+    if (snap.data()!.instrumentsNotRequired.length > 0) {
+      const refInstruments = collection(db, "instruments");
+      const allInstruments = await getDocs(refInstruments);
+      selectedInstruments = allInstruments.docs
+        .map(doc => Object.assign({}, { id: doc.id }, doc.data()))
+        .filter(instrument => snap.data()!.instrumentsNotRequired.includes(instrument.id))
+    }
 
-    const refMood = doc(db, "moods", snap.data()!.moodId)
-    const mood = await getDoc(refMood);
-
-    const refInstruments = collection(db, "instruments");
-    const instruments = await getDocs(refInstruments);
-    const selectedInstruments = instruments.docs
-      .map(doc => Object.assign({}, { id: doc.id }, doc.data()))
-      .filter(instrument => snap.data()!.instrumentsNotRequired.includes(instrument.id))
-    
     return {
       ...snap.data(),
       id,
-      style : {
-        id: style.id,
-        ...style.data()
-      },
-      mood : {
-        id: mood.id,
-        ...mood.data()
-      },
+      style: style
+        ? {
+          id: style.id,
+          ...style.data()
+        }
+        : null,
+      mood: mood
+        ? {
+          id: mood.id,
+          ...mood.data()
+        }
+        : null,
       instrumentsNotRequired: selectedInstruments,
     } as unknown as ISongNested
   }

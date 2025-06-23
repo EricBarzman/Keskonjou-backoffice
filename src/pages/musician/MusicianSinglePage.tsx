@@ -20,7 +20,7 @@ function MusicianSinglePage() {
     // eslint-disable-next-line no-restricted-globals
     if (!confirm("Voulez-vous vraiment supprimer ce musician ?")) return;
     await deleteMusician(id!);
-    navigate("/gig/musician");
+    navigate("/people/musician");
   }
 
   useEffect(() => {
@@ -63,7 +63,7 @@ function MusicianSinglePage() {
         </div>
       </div>
 
-      <BackBtn to="/gig/musician" label="Musician" />
+      <BackBtn to="/people/musician" label="Musician" />
 
       <button
         className="p-3 mt-8 bg-red-700 rounded-lg text-white hover:bg-red-800"

@@ -9,6 +9,7 @@ import {
   orderBy,
   query,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '../client';
 import type { IFamily } from '../../types/instrument.type';
@@ -43,6 +44,15 @@ export function useFamilies() {
 
   async function deleteFamily(id: string) {
     const ref = doc(db, "families", id);
+
+    // Update the instruments by cascade
+    const instruRef = collection(db, "instruments")
+    const targetInstru = await getDocs(query(instruRef,
+      where('familyId', "==", id)
+    ))
+    targetInstru.docs.forEach(snap => updateDoc(snap.ref, { familyId: "" }))
+
+    // Delete family
     return deleteDoc(ref);
   }
 

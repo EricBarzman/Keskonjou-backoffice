@@ -9,6 +9,7 @@ import {
   orderBy,
   query,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '../client';
 import type { IMood } from '../../types/song.type';
@@ -45,6 +46,15 @@ export function useMoods() {
 
   async function deleteMood(id: string) {
     const ref = doc(db, "moods", id);
+
+    // Update the songs by cascade
+    const songRef = collection(db, "songs")
+    const targetSongs = await getDocs(query(songRef,
+      where('moodId', "==", id)
+    ))
+    targetSongs.docs.forEach(snap => updateDoc(snap.ref, { moodId: "" }))
+
+    // Delete mood
     return deleteDoc(ref);
   }
 

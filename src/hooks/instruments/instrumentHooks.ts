@@ -9,6 +9,7 @@ import {
   orderBy,
   query,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '../client';
 import type { IInstrument, IInstrumentNested } from '../../types/instrument.type';
@@ -30,16 +31,21 @@ export function useInstruments() {
     const snap = await getDoc(ref);
 
     // Get external attributes --eg join--
-    const refFamily = doc(db, "families", snap.data()!.familyId)
-    const family = await getDoc(refFamily);
-    
+    let family = null;
+    if (snap.data()!.familyId) {
+      const refFamily = doc(db, "families", snap.data()!.familyId)
+      family = await getDoc(refFamily);
+    }
+
     return {
       ...snap.data(),
       id,
-      family: {
-        id: family.id,
-        ...family.data(),
-      },
+      family: family
+        ? {
+          id: family.id,
+          ...family.data(),
+        }
+        : null,
     } as IInstrumentNested;
   }
 
@@ -55,6 +61,27 @@ export function useInstruments() {
 
   async function deleteInstrument(id: string) {
     const ref = doc(db, "instruments", id);
+
+    // Update par cascade les musiciens
+    const musicianRef = collection(db, "musicians")
+    const targetMusician = await getDocs(query(musicianRef,
+      where('instruments', "array-contains", id)
+    ))
+    targetMusician.docs.forEach(snap =>
+      updateDoc(snap.ref, {
+        instruments: snap.data().instruments.filter((instruId: string) => instruId !== id)
+      }))
+
+    // Update par cascade les songs
+    const songRef = collection(db, "songs")
+    const targetSongs = await getDocs(query(songRef,
+      where('instrumentsNotRequired', "array-contains", id)
+    ))
+    targetSongs.docs.forEach(snap =>
+      updateDoc(snap.ref, {
+        instrumentsNotRequired: snap.data().instrumentsNotRequired.filter((instruId: string) => instruId !== id)
+      }))
+
     return deleteDoc(ref);
   }
 

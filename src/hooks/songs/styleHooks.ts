@@ -9,6 +9,7 @@ import {
   orderBy,
   query,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '../client';
 import type { IStyle } from '../../types/song.type';
@@ -43,6 +44,15 @@ export function useStyles() {
 
   async function deleteStyle(id: string) {
     const ref = doc(db, "styles", id);
+
+    // Update the songs by cascade
+    const songRef = collection(db, "songs")
+    const targetSongs = await getDocs(query(songRef,
+      where('styleId', "==", id)
+    ))
+    targetSongs.docs.forEach(snap => updateDoc(snap.ref, { styleId: "" }))
+
+    // Delete mood
     return deleteDoc(ref);
   }
 

@@ -40,6 +40,7 @@ import UserSinglePage from "./pages/user/UserSinglePage"
 import BandsPage from "./pages/band/BandsPage"
 import BandCreateOrEdit from "./pages/band/BandCreateOrEdit"
 import BandSinglePage from "./pages/band/BandSinglePage"
+import SetlistsPage from "./pages/setlist/SetlistsPage"
 
 
 function App() {
@@ -222,7 +223,25 @@ function App() {
             } />
             
             
-            <Route path="/song/setlist" element={<p>Setlist</p>} />
+            <Route path="/song/setlist" element={<SetlistsPage />} />
+            <Route path="/song/setlist/add" element={
+              <>
+                <SetlistsPage />
+                <MoodCreateOrEdit />
+              </>
+            } />
+            <Route path="/song/setlist/:id" element={
+              <>
+                <SetlistsPage />
+                <MoodSinglePage />
+              </>
+            } />
+            <Route path="/song/setlist/:id/edit" element={
+              <>
+                <SetlistsPage />
+                <MoodCreateOrEdit />
+              </>
+            } />
 
             <Route path="/gig" element={<GigCats />} />
             <Route path="/gig/gig" element={<p>Gig</p>} />
